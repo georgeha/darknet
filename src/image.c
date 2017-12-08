@@ -212,6 +212,7 @@ void draw_bbox(image a, box bbox, int w, float r, float g, float b)
     int right = (bbox.x+bbox.w/2)*a.w;
     int top   = (bbox.y-bbox.h/2)*a.h;
     int bot   = (bbox.y+bbox.h/2)*a.h;
+    printf("left: %d \n right: %d \n   top: %d \n bottom : %d \n ",left,right,top,bot); 
 
     int i;
     for(i = 0; i < w; ++i){
@@ -287,6 +288,23 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
             if(right > im.w-1) right = im.w-1;
             if(top < 0) top = 0;
             if(bot > im.h-1) bot = im.h-1;
+
+            printf("Bounding Box: Left=%d, Top=%d, Right=%d, Bottom=%d\n", left, top, right, bot);
+            /******* - writing the name and the abounding box of the prediction  to a file ******/
+
+            FILE *f = fopen("prediction_george.txt", "a");
+			if (f == NULL)
+			{
+    			printf("Error opening file!\n");
+   				 exit(1);
+			}
+			/* print some text */
+			//const char *text = "Write this to the file";
+			/* TODO: add prediction name if required*/
+			fprintf(f, "Bounding Box: Left=%d, Top=%d, Right=%d, Bottom=%d\n", left, top, right, bot);
+
+			fclose(f);
+			/******* - Prediction written to a file  ******/
 
             draw_box_width(im, left, top, right, bot, width, red, green, blue);
             if (alphabet) {
