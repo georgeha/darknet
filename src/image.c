@@ -289,20 +289,32 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
             if(top < 0) top = 0;
             if(bot > im.h-1) bot = im.h-1;
 
-            printf("Bounding Box: Left=%d, Top=%d, Right=%d, Bottom=%d\n", left, top, right, bot);
-            /******* - writing the name and the abounding box of the prediction  to a file ******/
 
-            FILE *f = fopen("prediction_george.txt", "a");
+     
+            /******* - writing the name and the abounding box of the prediction  to a file ******/
+            FILE *f = fopen("prediction_george.csv", "a");
 			if (f == NULL)
 			{
     			printf("Error opening file!\n");
    				 exit(1);
 			}
-			/* print some text */
-			//const char *text = "Write this to the file";
-			/* TODO: add prediction name if required*/
-			fprintf(f, "Bounding Box: Left=%d, Top=%d, Right=%d, Bottom=%d\n", left, top, right, bot);
 
+            for(j = 0; j < classes; ++j){
+                if (probs[i][j] > thresh){
+                    if (class < 0) {
+                        strcat(labelstr, names[j]);
+                        class = j;
+                } else {
+                    strcat(labelstr, ", ");
+                    strcat(labelstr, names[j]);
+                }
+                       //pprintf("%s: %.0f%%\n", names[j], probs[i][j]*100);
+			fprintf(f, "%s, %.0f, %d, %d, %d, %d\n", names[j],probs[i][j]*100, left,  top, right, bot);
+
+            printf("Name: %s ,Bounding Box: Left=%d, Top=%d, Right=%d, Bottom=%d\n", names[j],left, top, right, bot);
+            }
+        }
+             //fprintf(f, "%s,%d,%d,%d,%d,%d\n", item,propability,left, top, right, bot);
 			fclose(f);
 			/******* - Prediction written to a file  ******/
 
